@@ -1,0 +1,63 @@
+﻿<Window x:Class="WpfApp1.PrivelegyWindow.Admin.AdminWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:conv="clr-namespace:WpfApp1.Converters"
+        Title="Admin Panel" Height="800" Width="800">
+	<Window.Resources>
+		<conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+	</Window.Resources>
+
+	<DockPanel Margin="10">
+		<!-- 👤 Панель подробностей выбранного пользователя -->
+		<Border DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,0,0,10">
+			<StackPanel Orientation="Horizontal" Visibility="{Binding SelectedUser, Converter={StaticResource NullToVisibilityConverter}}">
+				<Image Source="{Binding SelectedUser.Images[0].FilePath}" Width="100" Height="100" Margin="0,0,20,0"/>
+				<StackPanel>
+					<TextBlock Text="{Binding SelectedUser.Username}" FontSize="16" FontWeight="Bold"/>
+					<TextBlock Text="{Binding SelectedUser.Role}" FontStyle="Italic" Margin="0,0,0,10"/>
+
+					<!-- Контакты -->
+					<ItemsControl ItemsSource="{Binding SelectedUser.Contacts}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Email}" />
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+
+					<!-- Адреса -->
+					<ItemsControl ItemsSource="{Binding SelectedUser.Addresses}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Street}" />
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+
+					<!-- Документы -->
+					<ItemsControl ItemsSource="{Binding SelectedUser.Documents}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<TextBlock>
+									<Hyperlink NavigateUri="{Binding FilePath}" RequestNavigate="Hyperlink_RequestNavigate">
+										<TextBlock Text="{Binding FilePath}" />
+									</Hyperlink>
+								</TextBlock>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<!-- Список пользователей -->
+		<ListView ItemsSource="{Binding CustomerUsers}" SelectionChanged="UserSelected">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="Пользователь" DisplayMemberBinding="{Binding Username}" Width="200"/>
+					<GridViewColumn Header="Роль" DisplayMemberBinding="{Binding Role}" Width="100"/>
+				</GridView>
+			</ListView.View>
+		</ListView>
+	</DockPanel>
+</Window>
